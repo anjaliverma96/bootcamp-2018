@@ -1,0 +1,73 @@
+---
+title: "R day 2"
+author: "Anjali Verma"
+date: "9/18/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+here::here("data", "gapminder5.csv")
+gapminder<-read.csv(here::here("data","gapminder5.csv"))
+```
+## Converting factors to characters
+```{r}
+gapminder$country <- as.character(gapminder$country)
+gapminder$continent <- as.character(gapminder$continent)
+str(gapminder)
+```
+## Creating logged variables with a for loop
+```{r}
+conts <- unique(gapminder$continent)
+for(i in conts){mean_le <- mean(gapminder$lifeExp[gapminder$continent == i], na.rm = TRUE)
+ print(paste0(i ,":", mean_le))}
+
+```
+```{r}
+conts <- unique(gapminder$continent)
+years <- unique(gapminder$year)
+for (i in conts){print(paste0("Continent",": ", i))
+for(j in years){sd_le <- sd(gapminder$lifeExp[gapminder$continent == i & gapminder$year == j],na.rm = TRUE)
+print(paste0(j ,":", sd_le))}}
+```
+```{r}
+i <- 1952
+while(i < 1987){
+  sd_le <-sd(gapminder$lifeExp[gapminder$year == i], na.rm = TRUE)
+  
+  print(paste0(i, ":", sd_le))
+  i <- i+5
+}
+```
+```{r}
+
+random_year <- sample(years,1)
+if (random_year>1977){print(random_year)}else{
+  print("sorry, random year is less than 1977")
+}
+```
+```{r}
+for (i in unique(gapminder$year)){
+  if(i >= 1987){
+    mean_pop <- mean(gapminder$pop[gapminder$year == i], na.rm =TRUE)
+    print(paste0(i, ":", mean_pop))
+  }else{print("Sorry, the year is less than 1987")}
+}
+```
+```{r}
+statistics_gapminder <- function(df,variable,continent){
+  var <- df[[variable]][df$continent == continent]
+  mean_le <- mean(var)
+  sd_le <- sd(var)
+  max_le <- max(var)
+  min_le <- min(var)
+  cat("Continent:", continent, 
+        "\nMean Life Expectancy:", mean_le,
+        "\nSD Life Expectancy:", sd_le,
+      "\nMax Life Expectancy:", max_le,
+      "\nMin Life Expectancy:", min_le)
+}
+statistics_gapminder(gapminder,"lifeExp","Asia")
+```
