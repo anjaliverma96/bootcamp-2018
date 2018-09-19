@@ -71,3 +71,86 @@ statistics_gapminder <- function(df,variable,continent){
 }
 statistics_gapminder(gapminder,"lifeExp","Asia")
 ```
+## Load the data
+```{r}
+here::here("data","gapminder5.csv")
+gapminder <- read.csv(here::here("data","gapminder5.csv"))
+```
+## If Statement
+```{r}
+if(any(gapminder$year == 2002)){print("Information on 2002 is present")
+}else{print("Information on 2002 is not present")}
+if(any(gapminder$year == 2012)){print("Information on 2012 is present")
+  }else{print("Information on 2012 is not present")}
+```
+## Loop and If statements
+```{r}
+threshold <- mean(gapminder$pop)
+for(i in unique(gapminder$country)){
+  if(mean(gapminder$pop[gapminder$country == i])<threshold){
+    mean_le<- mean(gapminder$lifeExp[gapminder$country == i])
+    print(paste0(i,":", mean_le))
+  }else{
+    print("Mean population for country is greater than threshold ")
+  }
+}
+```
+```{r}
+
+for(i in unique(gapminder$continent)){
+  if(mean(gapminder$lifeExp[gapminder$continent == i]) < 50){print(paste0(i,":","Less than 50"))}
+  if(mean(gapminder$lifeExp[gapminder$continent == i]) > 70){print(paste0(i,":","Greater than 70"))}
+  else{print(paste0(i,":","Greater than 50 and less than 70"))}
+}
+
+```
+## Writing Functions
+```{r}
+class_and_names <- function(df){
+for(i in 1:ncol(df))
+{colnames<-colnames(df)
+ print(paste(colnames[i],":",class(df[,i])))
+}
+}
+class_and_names(gapminder)
+
+```
+```{r}
+vector_statistics<- function(vector, option = FALSE){
+  mean <- mean(vector)
+  median<- median(vector)
+  sd <- sd(vector)
+  if(option == TRUE){
+    print(paste0(mean," ", sd," ", median))
+  }else{
+    print(paste0(mean," ", sd))
+  }
+}
+vector_statistics(unique(gapminder$year), option = TRUE)
+```
+## Analyzing Relationships
+```{r}
+viz_lm <- function(df, dv, iv, year){
+dat <- df[df[["year"]] == year,]
+y <- log(dat[[dv]])
+x <- log(dat[[iv]])
+fit <- lm(y~x)
+plot(y~x, main = year, xlab = iv, ylab = dv)
+lines(x, predict(fit), col = 'blue')
+}
+for (i in years){viz_lm(gapminder, "lifeExp","gdpPercap",i)}
+```
+## There is a positive relationship between lifeExp and gdpPercap that is, a higher GDP corresponds to a higher life expectancy. However, over the years, the line of fit becomes more flat which means that the smae change in GDP coresponds to a relatively lower change in life expectancy, as the years go by.
+
+```{r}
+viz_lm <- function(df, dv, iv, continent){
+dat <- df[df[["continent"]] == continent,]
+y <- log(dat[[dv]])
+x <- log(dat[[iv]])
+fit <- lm(y~x)
+plot(y~x, main = continent, xlab = iv, ylab = dv)
+lines(x, predict(fit), col = 'blue')
+}
+for (i in conts){viz_lm(gapminder, "lifeExp","gdpPercap",i)}
+
+```
